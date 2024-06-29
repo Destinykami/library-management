@@ -75,7 +75,7 @@ export function deleteReader(data) {
     data
   })
 }
-// 获取借书信息
+// 获取所有借书信息
 export function getBorrowList(params) {
   return request({
     url: '/book/borrowinfo',
@@ -83,8 +83,18 @@ export function getBorrowList(params) {
     params
   })
 }
+// 获取某个人的借书信息
+export function getBorrowListOfOne(params) {
+  console.log(params)
+  return request({
+    url: '/reader/borrowinfoOfOne',
+    method: 'get',
+    params: params
+  })
+}
 // 搜索书本
 export function searchBook(params) {
+  console.log(params)
   return request({
     url: '/reader/search',
     method: 'get',
@@ -106,4 +116,18 @@ export function borrowBook(isbn, cardid) {
     }
   })
 }
-
+// 还书
+export function returnBook(isbn, cardid) {
+  console.log(cardid)
+  return request({
+    url: '/reader/return',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: {
+      ISBN: isbn, // Assuming data is the ISBN string
+      CardID: cardid
+    }
+  })
+}

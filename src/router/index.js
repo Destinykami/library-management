@@ -90,22 +90,22 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/search_and_borrow',
+    path: '/return_and_borrow',
     component: Layout,
-    meta: { title: '借书&查书系统', icon: 'form' },
+    meta: { title: '查书&借书&还书系统', icon: 'form' },
     children: [
-      {
-        path: 'search',
-        name: 'search',
-        component: () => import('@/views/searchbook/index'),
-        meta: { title: '查书系统', icon: 'form' }
-      },
       {
         path: 'borrow',
         name: 'borrow',
-        component: () => import('@/views/borrowbook/index'),
-        meta: { title: '借书系统', icon: 'form' }
+        component: () => import('@/views/searchbook/index'),
+        meta: { title: '借书&查书系统', icon: 'form' }
       },
+      {
+        path: 'return',
+        name: 'return',
+        component: () => import('@/views/returnbook/index'),
+        meta: { title: '还书系统', icon: 'form' }
+      }
     ]
   },
   {

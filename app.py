@@ -137,7 +137,7 @@ def add_book():
 def get_borrowbook_info():
   with db.cursor() as cursor:
     # 查询数据库以获取图书信息
-    sql = "SELECT CardID,ISBN,BorrowDate,BorrowPeriod,ReturnDate,Fine FROM BorrowInfo"
+    sql = "SELECT CardID,ISBN,BorrowDate,BorrowPeriod,ReturnDate,Fine FROM BorrowInfo_ALL"
     cursor.execute(sql)
     result = cursor.fetchall()
     print(result)
@@ -145,6 +145,26 @@ def get_borrowbook_info():
     response = jsonify({'items': result})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
+#获取某个读者借书列表
+@app.route('/reader/borrowinfoOfOne', methods=['GET'])
+def get_borrowbook_info_of_one():
+  card_id = request.args.get('card_id')
+  print(card_id)
+  if not card_id:
+    return jsonify({"status": "error", "message": "缺少 card_id 参数"}), 400
+
+  with db.cursor() as cursor:
+    # 查询数据库以获取图书信息
+    sql = "SELECT CardID, ISBN, BorrowDate, BorrowPeriod, ReturnDate, Fine FROM BorrowInfo WHERE CardID = %s"
+    cursor.execute(sql, (card_id,))
+    result = cursor.fetchall()
+    print(result)
+
+    # 返回结果
+    response = jsonify({'items': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 200
+
 
 
 #删除图书
@@ -263,12 +283,18 @@ def borrow_a_book():
   return_date = None  # Initial return date is null
   fine = None  # Initial fine amount is null
 
+  #向总表中插入，向当前表中插入
   with db.cursor() as cursor:
-    sql_insert = """
+    sql_insert1 = """
         INSERT INTO BorrowInfo (CardID, ISBN, BorrowDate, BorrowPeriod, ReturnDate, Fine)
         VALUES (%s, %s, %s, %s, %s, %s)
         """
-    cursor.execute(sql_insert, (card_id, isbn, borrow_date, borrow_period, return_date, fine))
+    cursor.execute(sql_insert1, (card_id, isbn, borrow_date, borrow_period, return_date, fine))
+    sql_insert2 = """
+        INSERT INTO BorrowInfo_ALL (CardID, ISBN, BorrowDate, BorrowPeriod, ReturnDate, Fine)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+    cursor.execute(sql_insert2, (card_id, isbn, borrow_date, borrow_period, return_date, fine))
     sql_update_book="""
       UPDATE Bookinfo set AvailableQuantity=AvailableQuantity-1 where ISBN = %s
       """
@@ -276,7 +302,61 @@ def borrow_a_book():
     db.commit()
 
   return jsonify({"status": "success", "message": "Book borrowed successfully"}), 200
+# 还书
+@app.route("/reader/return", methods=["POST"])
+def return_a_book():
+  data = request.json
+  isbn = data.get('ISBN')
+  card_id = data.get('CardID')
 
+  if not isbn or not card_id:
+    return jsonify({"status": "error", "message": "ISBN and CardID are required"}), 400
+  #检查书是否存在
+  with db.cursor() as cursor:
+    sql_book = "SELECT * FROM BookInfo WHERE ISBN = %s and IsAvailable = True"
+    cursor.execute(sql_book, isbn)
+    book = cursor.fetchone()
+    if not book:
+      return jsonify({"status": "error", "message": f"Book with ISBN {isbn} not found"}), 404
+  #检查读者是否存在
+  with db.cursor() as cursor:
+    sql_reader = "SELECT * FROM ReaderInfo WHERE CardID = %s"
+    cursor.execute(sql_reader, card_id)
+    reader = cursor.fetchone()
+    if not reader:
+      return jsonify({"status": "error", "message": f"Reader with CardID {card_id} not found"}), 404
+  # 获取借书时间和借书期限
+  with db.cursor() as cursor:
+    sql_borrow_info = "SELECT BorrowDate, BorrowPeriod FROM BorrowInfo WHERE ISBN = %s AND CardID = %s"
+    cursor.execute(sql_borrow_info, (isbn, card_id))
+    borrow_info = cursor.fetchone()
+    print(borrow_info)
+    if not borrow_info:
+      return jsonify({"status": "error", "message": "No borrow record found for this book and reader"}), 404
+
+  borrow_date = borrow_info['BorrowDate']
+  borrow_period = borrow_info['BorrowPeriod']
+  return_date = datetime.date.today()
+  overdue_days = (return_date - borrow_date).days - borrow_period
+  fine = max(overdue_days, 0) * 5
+
+  with db.cursor() as cursor:
+    # 向总表中加入信息，从当前表中删除
+    sql_return1 = """
+        UPDATE BorrowInfo_ALL SET returndate=%s, Fine=%s WHERE ISBN = %s and CardID = %s
+        """
+    cursor.execute(sql_return1, (return_date, fine, isbn,card_id))
+    sql_return2 = """
+        DELETE FROM BorrowInfo  WHERE ISBN = %s and CardID = %s
+        """
+    cursor.execute(sql_return2, ( isbn,card_id))
+    sql_update_book="""
+      UPDATE Bookinfo set AvailableQuantity=AvailableQuantity+1 where ISBN = %s
+      """
+    cursor.execute(sql_update_book, isbn)
+    db.commit()
+
+  return jsonify({"status": "success", "message": "Book borrowed successfully"}), 200
 @app.route("/")
 def hello_world():
   return "<p>Hello, World!</p>"
