@@ -109,6 +109,30 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/reader_info_and_borrowed_book',
+    component: Layout,
+    children: [
+      {
+        path: 'reader_info_and_borrowed_book',
+        name: 'reader_info_and_borrowed_book',
+        component: () => import('@/views/reader_info_and_borrowed_book/index'),
+        meta: { title: '读者已借书信息', icon: 'table' }
+      }
+    ]
+  },
+  {
+    path: '/borrowed_book',
+    component: Layout,
+    children: [
+      {
+        path: 'borrowed_book',
+        name: 'borrowed_book',
+        component: () => import('@/views/borrowed_book/index'),
+        meta: { title: '已借未归还图书', icon: 'link' }
+      }
+    ]
+  },
+  {
     path: '/nested',
     component: Layout,
     redirect: '/nested/menu1',
@@ -167,16 +191,7 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
-    ]
-  },
+
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

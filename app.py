@@ -254,6 +254,44 @@ def search_books():
     response = jsonify({'items': result})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
+# 查询书本
+@app.route("/reader/search_book", methods=["GET"])
+def search_reader_books():
+  name = request.args.get('name', '')
+  card_id = request.args.get('card_id', '')
+
+  with db.cursor() as cursor:
+    # 根据输入的读者姓名或借书证号查询基本信息及未归还图书信息
+    sql = """
+            SELECT
+                r.CardID,
+                r.Name,
+                r.Gender,
+                r.Title,
+                r.MaxBorrowQuantity,
+                r.CurrentBorrowQuantity,
+                r.Department,
+                r.PhoneNumber,
+                b.ISBN,
+                b.Title as BookName
+            FROM
+                ReaderInfo r
+            LEFT JOIN
+                BorrowInfo bi ON r.CardID = bi.CardID
+            LEFT JOIN
+                BookInfo b ON bi.ISBN = b.ISBN
+            WHERE
+                (r.Name LIKE %s OR r.CardID LIKE %s)
+                AND bi.ISBN IS NOT NULL
+                AND bi.ReturnDate IS NULL
+        """
+    cursor.execute(sql, ('%' + name + '%', '%' + card_id + '%'))
+    result = cursor.fetchall()
+    print(result)
+    response = jsonify({'items': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 200
+
 # 借书
 @app.route("/reader/borrow", methods=["POST"])
 def borrow_a_book():
@@ -357,6 +395,36 @@ def return_a_book():
     db.commit()
 
   return jsonify({"status": "success", "message": "Book borrowed successfully"}), 200
+
+#所有已借未归还图书
+@app.route("/books/overdue", methods=["GET"])
+def get_overdue_books():
+  with db.cursor() as cursor:
+    # 查询所有到期未归还的图书信息
+    sql = """
+            SELECT
+                b.ISBN,
+                b.Title,
+                r.Name AS ReaderName,
+                r.CardID,
+                bi.BorrowDate,
+                DATE_ADD(bi.BorrowDate, INTERVAL bi.BorrowPeriod DAY) AS DueDate
+            FROM
+                BorrowInfo bi
+            JOIN
+                BookInfo b ON bi.ISBN = b.ISBN
+            JOIN
+                ReaderInfo r ON bi.CardID = r.CardID
+            WHERE
+                bi.ReturnDate IS NULL
+        """
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    print(result)
+    response = jsonify({'items': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 200
+
 @app.route("/")
 def hello_world():
   return "<p>Hello, World!</p>"

@@ -101,6 +101,15 @@ export function searchBook(params) {
     params
   })
 }
+// 搜索书本
+export function searchReaderAndBook(params) {
+  console.log(params)
+  return request({
+    url: '/reader/search_book',
+    method: 'get',
+    params
+  })
+}
 // 借书
 export function borrowBook(isbn, cardid) {
   console.log(cardid)
@@ -131,3 +140,12 @@ export function returnBook(isbn, cardid) {
     }
   })
 }
+// 已借未归还图书
+// 获取到期未归还的图书信息
+export function getOverdueBooks() {
+  return request({
+    url: '/books/overdue',
+    method: 'get'
+  })
+}
+
