@@ -51,7 +51,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: '主界面',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '图书管理系统', icon: 'dashboard' }
+      meta: { title: '图书管理系统', icon: 'education' }
     }]
   },
 
@@ -66,13 +66,13 @@ export const constantRoutes = [
         path: 'reader_info',
         name: 'reader_info',
         component: () => import('@/views/readermanage/index'),
-        meta: { title: '读者信息管理', icon: 'table' }
+        meta: { title: '读者信息管理', icon: 'peoples' }
       },
       {
         path: 'book_info',
         name: 'book_info',
         component: () => import('@/views/bookinfo/index'),
-        meta: { title: '书籍管理', icon: 'tree' }
+        meta: { title: '书籍管理', icon: 'documentation' }
       }
     ]
   },
@@ -128,71 +128,10 @@ export const constantRoutes = [
         path: 'borrowed_book',
         name: 'borrowed_book',
         component: () => import('@/views/borrowed_book/index'),
-        meta: { title: '已借未归还图书', icon: 'link' }
+        meta: { title: '已借未归还图书', icon: 'search' }
       }
     ]
   },
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
