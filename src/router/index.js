@@ -50,8 +50,8 @@ export const constantRoutes = [
     children: [{
       path: 'dashboard',
       name: '主界面',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '图书管理系统', icon: 'dashboard' }
+      component: () => import('@/views/mainpage.vue'),
+      meta: { title: '图书管理系统', icon: 'borrow' }
     }]
   },
 
@@ -60,19 +60,19 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/admin/reader_info',
     name: '管理员模块',
-    meta: { title: '管理员模块', icon: 'el-icon-s-help' },
+    meta: { title: '管理员模块', icon: 'admin' },
     children: [
       {
         path: 'reader_info',
         name: 'reader_info',
-        component: () => import('@/views/readermanage/index'),
-        meta: { title: '读者信息管理', icon: 'table' }
+        component: () => import('@/views/readermanage'),
+        meta: { title: '读者信息管理', icon: 'peoples' }
       },
       {
         path: 'book_info',
         name: 'book_info',
-        component: () => import('@/views/bookinfo/index'),
-        meta: { title: '书籍管理', icon: 'tree' }
+        component: () => import('@/views/bookinfo'),
+        meta: { title: '书籍管理', icon: 'documentation' }
       }
     ]
   },
@@ -84,30 +84,38 @@ export const constantRoutes = [
       {
         path: 'borrow_info',
         name: 'borrow_info',
-        component: () => import('@/views/borrowinfo/index'),
+        component: () => import('@/views/borrowinfo'),
         meta: { title: '借阅信息', icon: 'eye-open' }
       }
     ]
   },
   {
-    path: '/return_and_borrow',
+    path: '/borrowbook',
     component: Layout,
-    meta: { title: '查书&借书&还书系统', icon: 'form' },
+    meta: { title: '借书系统', icon: 'form' },
     children: [
       {
         path: 'borrow',
         name: 'borrow',
-        component: () => import('@/views/searchbook/index'),
+        component: () => import('@/views/searchbook'),
         meta: { title: '借书&查书系统', icon: 'form' }
-      },
+      }
+    ]
+  },
+  {
+    path: '/return',
+    component: Layout,
+    meta: { title: '还书系统', icon: 'form' },
+    children: [
       {
         path: 'return',
         name: 'return',
-        component: () => import('@/views/returnbook/index'),
+        component: () => import('@/views/returnbook'),
         meta: { title: '还书系统', icon: 'form' }
       }
     ]
   },
+
   {
     path: '/reader_info_and_borrowed_book',
     component: Layout,
@@ -115,7 +123,7 @@ export const constantRoutes = [
       {
         path: 'reader_info_and_borrowed_book',
         name: 'reader_info_and_borrowed_book',
-        component: () => import('@/views/reader_info_and_borrowed_book/index'),
+        component: () => import('@/views/reader_info_and_borrowed_book'),
         meta: { title: '读者已借书信息', icon: 'table' }
       }
     ]
@@ -127,72 +135,11 @@ export const constantRoutes = [
       {
         path: 'borrowed_book',
         name: 'borrowed_book',
-        component: () => import('@/views/borrowed_book/index'),
-        meta: { title: '已借未归还图书', icon: 'link' }
+        component: () => import('@/views/borrowed_book'),
+        meta: { title: '已借未归还图书', icon: 'search' }
       }
     ]
   },
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
