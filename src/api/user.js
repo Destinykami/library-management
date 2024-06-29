@@ -8,17 +8,22 @@ export function login(data) {
   })
 }
 
+// export function getInfo(token) {
+//   return request({
+//     url: '/user/info',
+//     method: 'get',
+//     params: { token }
+//   })
+// }
+
+// 获取用户信息
 export function getInfo(token) {
   return request({
     url: '/user/info',
     method: 'get',
-    params: { token }
+    params: {
+      token: token // Assuming token is the actual token string
+    }
   })
 }
 
-// export function logout() {
-//   return request({
-//     url: '/user/logout',
-//     method: 'post'
-//   })
-// }

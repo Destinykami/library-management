@@ -1,15 +1,10 @@
+import datetime
+
 from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token
 from flask_cors import CORS
 import pymysql
-
 app = Flask(__name__)
 CORS(app)
-
-# 配置 JWT 密钥
-app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'  # 更换为你自己的密钥
-jwt = JWTManager(app)
-
 # 连接到数据库
 db = pymysql.connect(
   host="localhost",
@@ -46,15 +41,30 @@ def user_login():
     return jsonify({"message": "Username and password are required"}), 400
 
 
-#获取用户信息
 @app.route("/user/info", methods=['GET'])
 def get_user_info():
-  print("try to get user info")
-  #post_data = request.get_json()
-  #token=post_data.get('token')
-  #print(token)
-  user = 0
-  return jsonify({"status": 200, "message": "登录成功", "username": "adminkami", "is_admin": 1, "userid": 0}), 200
+  uid = request.args.get('token')  # 获取查询参数中的 token，这里假设是用户的 uid
+
+  with db.cursor() as cursor:
+    # 查询数据库以验证用户
+    sql = "SELECT Account, Role, uid, CardID FROM Login WHERE uid=%s"
+    cursor.execute(sql, (uid,))
+    result = cursor.fetchone()  # 假设只查询到一个用户信息，使用 fetchone()
+
+    if result:
+      # 构造返回的 JSON 数据
+      user_info = {
+        "status": 200,
+        "message": "登录成功",
+        "username": result['Account'],  # 假设 Account 是用户的用户名
+        "is_admin": True if result['Role'] == 'Admin' else False,  # 根据 Role 判断是否是管理员
+        "userid": result['uid'],  # 用户的 uid
+        "card_id": result['CardID']  # 用户的 CardID
+      }
+      return jsonify(user_info), 200  # 返回用户信息和状态码 200 表示成功
+    else:
+      return jsonify({"status": 404, "message": "用户不存在"}), 404  # 如果未找到用户，返回状态码 404 表示未找到用户
+
 
 
 #获取书籍信息
@@ -206,6 +216,66 @@ def delete_reader():
     cursor.execute(sql, str(data))
     db.commit()
   return jsonify({"status": "success"}), 200
+# 查询书本
+@app.route("/reader/search", methods=["GET"])
+def search_books():
+  title = request.args.get('title', '')
+  isbn = request.args.get('isbn', '')
+  author = request.args.get('author', '')
+
+  with db.cursor() as cursor:
+    sql = """
+        SELECT * FROM Bookinfo
+        WHERE Title LIKE %s OR ISBN LIKE %s OR Author LIKE %s
+        """
+    cursor.execute(sql, ('%' + title + '%', '%' + isbn + '%', '%' + author + '%'))
+    result = cursor.fetchall()
+    print(result)
+    response = jsonify({'items': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 200
+# 借书
+@app.route("/reader/borrow", methods=["POST"])
+def borrow_a_book():
+  data = request.json
+  isbn = data.get('ISBN')
+  card_id = data.get('CardID')
+
+  if not isbn or not card_id:
+    return jsonify({"status": "error", "message": "ISBN and CardID are required"}), 400
+  #检查书是否存在
+  with db.cursor() as cursor:
+    sql_book = "SELECT * FROM BookInfo WHERE ISBN = %s and IsAvailable = True"
+    cursor.execute(sql_book, isbn)
+    book = cursor.fetchone()
+    if not book:
+      return jsonify({"status": "error", "message": f"Book with ISBN {isbn} not found"}), 404
+  #检查读者是否存在
+  with db.cursor() as cursor:
+    sql_reader = "SELECT * FROM ReaderInfo WHERE CardID = %s"
+    cursor.execute(sql_reader, card_id)
+    reader = cursor.fetchone()
+    if not reader:
+      return jsonify({"status": "error", "message": f"Reader with CardID {card_id} not found"}), 404
+
+  borrow_date = datetime.date.today()  # Assuming today's date as borrow date
+  borrow_period = 14  #  14 days borrow period
+  return_date = None  # Initial return date is null
+  fine = None  # Initial fine amount is null
+
+  with db.cursor() as cursor:
+    sql_insert = """
+        INSERT INTO BorrowInfo (CardID, ISBN, BorrowDate, BorrowPeriod, ReturnDate, Fine)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+    cursor.execute(sql_insert, (card_id, isbn, borrow_date, borrow_period, return_date, fine))
+    sql_update_book="""
+      UPDATE Bookinfo set AvailableQuantity=AvailableQuantity-1 where ISBN = %s
+      """
+    cursor.execute(sql_update_book, isbn)
+    db.commit()
+
+  return jsonify({"status": "success", "message": "Book borrowed successfully"}), 200
 
 @app.route("/")
 def hello_world():

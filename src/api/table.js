@@ -83,3 +83,27 @@ export function getBorrowList(params) {
     params
   })
 }
+// 搜索书本
+export function searchBook(params) {
+  return request({
+    url: '/reader/search',
+    method: 'get',
+    params
+  })
+}
+// 借书
+export function borrowBook(isbn, cardid) {
+  console.log(cardid)
+  return request({
+    url: '/reader/borrow',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: {
+      ISBN: isbn, // Assuming data is the ISBN string
+      CardID: cardid
+    }
+  })
+}
+

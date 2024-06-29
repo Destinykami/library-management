@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    cardId: ''
   }
 }
 
@@ -24,6 +25,12 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ReaderCardID: (state, id) => {
+    state.cardId = id
+  },
+  SET_ISADMIN: (state, isAdmin) => {
+    state.isAdmin = 0
   }
 }
 
@@ -55,9 +62,14 @@ const actions = {
         // }
         // const { name, avatar } = data
 
-        const { username } = response
+        console.log(response)
+        const { username, card_id, is_admin } = response
         commit('SET_NAME', username)
-        commit('SET_AVATAR','https://avatars.githubusercontent.com/u/104617257?s=400&u=2059fa44805df506f7126274c18728d48d0eaa30&v=4')
+        commit('SET_AVATAR', 'https://avatars.githubusercontent.com/u/104617257?s=400&u=2059fa44805df506f7126274c18728d48d0eaa30&v=4')
+        commit('SET_ReaderCardID', card_id)
+        console.log(card_id)
+
+        commit('SET_ISADMIN', is_admin)
         resolve()
       }).catch(error => {
         reject(error)
