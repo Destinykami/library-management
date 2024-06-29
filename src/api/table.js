@@ -31,6 +31,50 @@ export function addBook(data) {
     data
   })
 }
+// 删除书本
+export function deleteBook(data) {
+  return request({
+    url: '/book/delete',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data
+  })
+}
+// 修改书本
+export function updateBook(data) {
+  return request({
+    url: '/book/update',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data
+  })
+}
+// 修改读者
+export function updateReader(data) {
+  return request({
+    url: '/reader/update',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data
+  })
+}
+// 删除读者
+export function deleteReader(data) {
+  return request({
+    url: '/reader/delete',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data
+  })
+}
 // 获取借书信息
 export function getBorrowList(params) {
   return request({

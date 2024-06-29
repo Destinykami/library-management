@@ -34,14 +34,7 @@ export function addBookInfo(data) {
     })
 }
 
-// 删除图书信息
-export function deleteBookInfo(data) {
-    return request({
-        url: '/bookInfo/deleteBookInfo',
-        method: 'delete',
-        data
-    })
-}
+
 
 //  删除一些图书信息
 export function deleteBookInfos(data) {
