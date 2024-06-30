@@ -41,7 +41,7 @@
           <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleEdit(scope.row)">
             修改
           </el-button>
-          <el-button v-permission="['admin']" class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row.ISBN)">
+          <el-button class="filter-item" style="margin-left: 10px;" type="danger" icon="el-icon-delete" @click="handleDelete(scope.row.ISBN)">
             删除
           </el-button>
         </template>
@@ -164,10 +164,15 @@ export default {
   },
   methods: {
     fetchData() {
+      const searchParams = {
+        is_admin: this.$store.state.user.isAdmin
+      }
       this.listLoading = true
-      getBookList().then(response => {
+      getBookList(searchParams).then(response => {
         this.list = response.items
         this.listLoading = false
+      }).catch(error => {
+        this.$message.error('没有管理员权限')
       })
     },
     handleCreate() {

@@ -5,7 +5,7 @@
     <!-- 搜索框和按钮 -->
     <el-input v-model="searchName" placeholder="搜索读者名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
     <el-input v-model="searchCardID" placeholder="搜索读者卡号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-    <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+    <el-button type="primary" icon="el-icon-search" @click="handleFilter">
       搜索
     </el-button>
     <el-table v-if="list" :data="list" stripe>
@@ -44,11 +44,8 @@ export default {
       list: null,
       listLoading: true,
       formLabelWidth: '120px',
-      searchTitle: '',
-      searchISBN: '',
-      searchAuthor: '',
-      isbn_to_borrow: '',
-      reader_card_id: ''
+      searchCardID: '',
+      searchName: '',
     }
   },
   methods: {

@@ -46,9 +46,9 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/mainpage',
     children: [{
-      path: 'dashboard',
+      path: 'mainpage',
       name: '主界面',
       component: () => import('@/views/mainpage.vue'),
       meta: { title: '图书管理系统', icon: 'borrow' }
