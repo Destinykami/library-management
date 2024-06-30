@@ -140,12 +140,33 @@ export function returnBook(isbn, cardid) {
     }
   })
 }
-// 已借未归还图书
 // 获取到期未归还的图书信息
 export function getOverdueBooks() {
   return request({
     url: '/books/overdue',
     method: 'get'
+  })
+}
+// 获取未归还的欠款信息
+export function getdebt(params) {
+  return request({
+    url: '/reader/debt',
+    method: 'get',
+    params
+  })
+}
+// 缴纳欠款
+export function returnMoney(cardid) {
+  console.log(cardid)
+  return request({
+    url: '/reader/returnmoney',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: {
+      CardID: cardid
+    }
   })
 }
 

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { borrowBook, searchReaderAndBook } from '@/api/table'
+import { searchReaderAndBook } from '@/api/table'
 
 export default {
   data() {
@@ -56,7 +56,7 @@ export default {
       this.listLoading = true
       const searchParams = {
         name: this.searchName,
-        cardid: this.searchCardID,
+        cardid: this.searchCardID
       }
       searchReaderAndBook(searchParams).then(response => {
         console.log(response)

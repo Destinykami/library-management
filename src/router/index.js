@@ -98,7 +98,7 @@ export const constantRoutes = [
         path: 'borrow',
         name: 'borrow',
         component: () => import('@/views/searchbook'),
-        meta: { title: '借书&查书系统', icon: 'form' }
+        meta: { title: '借书&查书系统', icon: 'huanshu' }
       }
     ]
   },
@@ -111,7 +111,7 @@ export const constantRoutes = [
         path: 'return',
         name: 'return',
         component: () => import('@/views/returnbook'),
-        meta: { title: '还书系统', icon: 'form' }
+        meta: { title: '还书系统', icon: 'huanshu1' }
       }
     ]
   },
@@ -137,6 +137,18 @@ export const constantRoutes = [
         name: 'borrowed_book',
         component: () => import('@/views/borrowed_book'),
         meta: { title: '已借未归还图书', icon: 'search' }
+      }
+    ]
+  },
+  {
+    path: '/debtmoney',
+    component: Layout,
+    children: [
+      {
+        path: 'debtmoney',
+        name: 'debtmoney',
+        component: () => import('@/views/money'),
+        meta: { title: '欠款缴纳', icon: 'returnmoney' }
       }
     ]
   },

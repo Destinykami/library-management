@@ -59,6 +59,15 @@
 import { borrowBook, searchBook } from '@/api/table'
 
 export default {
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        '1': 'success',
+        '0': 'danger'
+      }
+      return statusMap[status]
+    }
+  },
   data() {
     return {
       list: null,

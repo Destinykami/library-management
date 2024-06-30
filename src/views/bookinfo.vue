@@ -74,8 +74,6 @@
         <el-form-item label="可借数量" :label-width="formLabelWidth">
           <el-input v-model="newBook.AvailableQuantity" type="number" />
         </el-form-item>
-
-        <!-- TODO  这里新增触发器 -->
         <el-form-item label="是否可借" :label-width="formLabelWidth">
           <el-switch v-model="newBook.IsAvailable" />
         </el-form-item>

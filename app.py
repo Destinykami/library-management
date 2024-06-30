@@ -351,7 +351,7 @@ def return_a_book():
     return jsonify({"status": "error", "message": "ISBN and CardID are required"}), 400
   #检查书是否存在
   with db.cursor() as cursor:
-    sql_book = "SELECT * FROM BookInfo WHERE ISBN = %s and IsAvailable = True"
+    sql_book = "SELECT * FROM BookInfo WHERE ISBN = %s "
     cursor.execute(sql_book, isbn)
     book = cursor.fetchone()
     if not book:
@@ -424,6 +424,63 @@ def get_overdue_books():
     response = jsonify({'items': result})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
+#未缴纳的欠款
+@app.route("/reader/debt", methods=["GET"])
+def get_debt():
+  card_id = request.args.get('cardid', '')
+  print(card_id)
+  with db.cursor() as cursor:
+    # 根据输入的读者姓名或借书证号查询欠款
+    sql = """
+            SELECT
+                r.CardID,
+                r.Name,
+                r.MaxBorrowQuantity,
+                r.CurrentBorrowQuantity,
+                r.Department,
+                r.PhoneNumber,
+                SUM(BorrowInfo_ALL.Fine) as Fine
+            FROM
+                ReaderInfo r
+            LEFT JOIN
+                BorrowInfo_ALL ON r.CardID = BorrowInfo_ALL.CardID
+            WHERE
+                r.CardID = %s
+            GROUP BY
+                r.CardID, r.Name, r.MaxBorrowQuantity, r.CurrentBorrowQuantity, r.Department, r.PhoneNumber
+        """
+    cursor.execute(sql, (card_id,))
+    result = cursor.fetchall()
+    print(result)
+    response = jsonify({'items': result})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 200
+# 缴纳欠款
+# 还书
+@app.route("/reader/returnmoney", methods=["POST"])
+def return_money():
+  data = request.json
+  card_id = data.get('CardID')
+
+  if  not card_id:
+    return jsonify({"status": "error", "message": "ISBN and CardID are required"}), 400
+  #检查读者是否存在
+  with db.cursor() as cursor:
+    sql_reader = "SELECT * FROM ReaderInfo WHERE CardID = %s"
+    cursor.execute(sql_reader, card_id)
+    reader = cursor.fetchone()
+    if not reader:
+      return jsonify({"status": "error", "message": f"Reader with CardID {card_id} not found"}), 404
+  # 把BorrowInfo_ALL中的所有该读者的欠款项改为0
+  with db.cursor() as cursor:
+    # 向总表中加入信息，从当前表中删除
+    sql = """
+        UPDATE BorrowInfo_ALL SET Fine=0 WHERE CardID = %s
+        """
+    cursor.execute(sql, card_id)
+    db.commit()
+
+  return jsonify({"status": "success", "message": "Book borrowed successfully"}), 200
 
 @app.route("/")
 def hello_world():
