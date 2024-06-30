@@ -81,8 +81,6 @@ def get_book_info():
     response = jsonify({'items': result})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
-
-
 #获取读者信息
 @app.route('/reader/info', methods=['GET'])
 def get_reader_info():
@@ -149,6 +147,7 @@ def get_borrowbook_info():
     response = jsonify({'items': result})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
+
 #获取某个读者借书列表
 @app.route('/reader/borrowinfoOfOne', methods=['GET'])
 def get_borrowbook_info_of_one():
@@ -258,6 +257,7 @@ def search_books():
     response = jsonify({'items': result})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
+
 # 查询书本
 @app.route("/reader/search_book", methods=["GET"])
 def search_reader_books():
@@ -291,7 +291,6 @@ def search_reader_books():
         """
     cursor.execute(sql, ('%' + name + '%', '%' + card_id + '%'))
     result = cursor.fetchall()
-    print(result)
     response = jsonify({'items': result})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
@@ -460,7 +459,6 @@ def get_debt():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
 # 缴纳欠款
-# 还书
 @app.route("/reader/returnmoney", methods=["POST"])
 def return_money():
   data = request.json
@@ -483,7 +481,6 @@ def return_money():
         """
     cursor.execute(sql, card_id)
     db.commit()
-
   return jsonify({"status": "success", "message": "Book borrowed successfully"}), 200
 
 @app.route("/")

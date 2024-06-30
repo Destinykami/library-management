@@ -1,11 +1,12 @@
 <template>
   <div class="dashboard-container">
     <div class="header">
-      <h1>图书管理系统</h1>
+      <h1>图书管理系统@XMU</h1>
+      <img src="../views/bg3.jpg" alt="Logo" class="logo">
       <!--      <h2>厦门大学计算机科学与技术系</h2>-->
     </div>
     <div class="content">
-      <p>欢迎使用图书管理系统。本系统旨在提供一个高效、便捷的图书管理平台，帮助师生轻松管理图书的借阅和归还。</p>
+      <p>这是厦门大学计算机科学与技术系数据库系统原理课程设计。旨在通过该项目，提高对于数据库的掌握程度，以及增加前后端分离系统设计的经验。</p>
       <h3>系统功能：</h3>
       <ul>
         <li><strong>图书查询：</strong>支持按书名、ISBN、作者等多条件查询。</li>
@@ -18,7 +19,6 @@
       <ul>
         <li><strong>前端：</strong>基于Vue-admin-template框架搭建，其提供了方便的权限管理功能</li>
         <li><strong>后端：</strong>基于Flask，相比与SpringBoot，学习路线比较平缓。</li>
-
       </ul>
     </div>
   </div>
@@ -95,5 +95,9 @@ export default {
 
 .content p {
   margin: 10px 0;
+}
+.logo {
+  width: 600px;
+  height: auto;
 }
 </style>
