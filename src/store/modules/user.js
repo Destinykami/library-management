@@ -30,8 +30,9 @@ const mutations = {
     state.cardId = id
   },
   SET_ISADMIN: (state, isAdmin) => {
-    state.isAdmin = 0
+    state.isAdmin = isAdmin ? 1 : 0
   }
+
 }
 
 const actions = {
@@ -67,9 +68,9 @@ const actions = {
         commit('SET_NAME', username)
         commit('SET_AVATAR', 'https://avatars.githubusercontent.com/u/104617257?s=400&u=2059fa44805df506f7126274c18728d48d0eaa30&v=4')
         commit('SET_ReaderCardID', card_id)
-        console.log(card_id)
-
         commit('SET_ISADMIN', is_admin)
+        console.log(is_admin)
+
         resolve()
       }).catch(error => {
         reject(error)

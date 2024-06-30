@@ -65,11 +65,12 @@ def get_user_info():
     else:
       return jsonify({"status": 404, "message": "用户不存在"}), 404  # 如果未找到用户，返回状态码 404 表示未找到用户
 
-
-
 #获取书籍信息
 @app.route('/book/info', methods=['GET'])
 def get_book_info():
+  is_admin = request.args.get('is_admin')
+  if not is_admin:
+    return jsonify({"status": "error", "message": "没有管理员权限!"}), 404
   with db.cursor() as cursor:
     # 查询数据库以获取图书信息
     sql = "SELECT ISBN, Title, Publisher, Author, TotalQuantity, AvailableQuantity, IsAvailable FROM BookInfo"
@@ -85,8 +86,11 @@ def get_book_info():
 #获取读者信息
 @app.route('/reader/info', methods=['GET'])
 def get_reader_info():
+  is_admin = request.args.get('is_admin')
+  if not is_admin:
+    return jsonify({"status": "error", "message": "没有管理员权限!"}), 404
   with db.cursor() as cursor:
-    # 查询数据库以获取图书信息
+    # 查询数据库以获取读者信息
     sql = "SELECT CardID,Name,Gender,Title,MaxBorrowQuantity,CurrentBorrowQuantity,Department,PhoneNumber FROM ReaderInfo"
     cursor.execute(sql)
     result = cursor.fetchall()

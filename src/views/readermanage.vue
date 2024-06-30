@@ -128,10 +128,16 @@ export default {
   },
   methods: {
     fetchData() {
+      const searchParams = {
+        is_admin: this.$store.state.user.isAdmin
+      }
+      console.log(searchParams)
       this.listLoading = true
-      getReaderList().then(response => {
+      getReaderList(searchParams).then(response => {
         this.list = response.items
         this.listLoading = false
+      }).catch(error => {
+        this.$message.error('没有管理员权限')
       })
     },
     // 点击添加记录
